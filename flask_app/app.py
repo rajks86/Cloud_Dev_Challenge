@@ -1,3 +1,4 @@
+'''Simple GET/POST(get user / add user) app.'''
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8,6 +9,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class User(db.Model):
+    '''create user DB'''
     id = db.Column(db.Integer, primary_key=True)
     uname = db.Column(db.String(80), unique=True, nullable=False)
     country = db.Column(db.String(120), nullable=False)
@@ -18,10 +20,12 @@ class User(db.Model):
 
 @app.route('/')
 def home():
-    return 'Welcome to my site! Use /getuser to get user details. Use /adduser POST method to add user.'
+    '''home page'''
+    return 'Welcome to my site!'
 
 @app.route('/getuser', methods = ['GET'])
 def getuser():
+    '''Get user details'''
     all_users = []
     users = User.query.all()
     for user in users:
@@ -31,7 +35,7 @@ def getuser():
             "Country ":user.country,
         }
         all_users.append(results)
-    
+
     return jsonify(
         {
             "success": True,
@@ -41,6 +45,7 @@ def getuser():
 
 @app.route('/adduser', methods=['POST'])
 def adduser():
+    '''Add user'''
     user_data = request.json
 
     uname = user_data['uname']
@@ -59,4 +64,4 @@ def adduser():
 
 if __name__ == '__main__':
     db.create_all()
-    app.run(debug=True)
+    app.run()
